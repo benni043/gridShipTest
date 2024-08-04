@@ -147,6 +147,15 @@ onMounted(() => {
   drawGrid();
 
   canvas.value!.addEventListener("mousedown", (event) => {
+    //todo does not work
+    // currentCell = undefined;
+    // mouseDownX = undefined;
+    // mouseDownY = undefined;
+    //
+    // console.log(grid)
+    //
+    // drawGrid();
+
     let rect = canvas.value!.getBoundingClientRect();
     let calcX = event.clientX - rect.left;
     let calcY = event.clientY - rect.top;
