@@ -74,21 +74,45 @@ function initShips() {
   grid.value[7][7].id = 2;
   grid.value[7][7].color = "red";
   grid.value[7][7].state = CellState.SHIP;
+
+  grid.value[0][9].id = 3;
+  grid.value[0][9].color = "yellow";
+  grid.value[0][9].state = CellState.SHIP;
+
+  grid.value[1][9].id = 3;
+  grid.value[1][9].color = "yellow";
+  grid.value[1][9].state = CellState.SHIP;
 }
 
 function drawGrid() {
   ctx.value!.clearRect(0, 0, canvasWidth, canvasHeight);
 
+  // Draw the grid
   for (let x = 0; x < gridSize; x++) {
     for (let y = 0; y < gridSize; y++) {
       ctx.value!.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
     }
   }
 
+  // Draw all ships except the one being moved
   for (let x = 0; x < gridSize; x++) {
     for (let y = 0; y < gridSize; y++) {
-      ctx.value!.fillStyle = grid.value[x][y].color;
-      drawShip(x, y, grid.value[x][y].x, grid.value[x][y].y)
+      if (grid.value[x][y] !== currentCell) {
+        ctx.value!.fillStyle = grid.value[x][y].color;
+        drawShip(x, y, grid.value[x][y].x, grid.value[x][y].y);
+      }
+    }
+  }
+
+  // Draw the currently moved ship last
+  if (currentCell) {
+    ctx.value!.fillStyle = currentCell.color;
+    for (let x = 0; x < gridSize; x++) {
+      for (let y = 0; y < gridSize; y++) {
+        if (grid.value[x][y].id === currentCell.id) {
+          drawShip(x, y, grid.value[x][y].x, grid.value[x][y].y);
+        }
+      }
     }
   }
 }
@@ -145,8 +169,8 @@ onMounted(() => {
     let calcX = event.clientX - rect.left;
     let calcY = event.clientY - rect.top;
 
-    let diffX = (calcX / cellSize - mouseDownX!);
-    let diffY = (calcY / cellSize - mouseDownY!);
+    let diffX = (calcX / cellSize - mouseDownX!) - 0.5;
+    let diffY = (calcY / cellSize - mouseDownY!) - 0.5;
 
     for (let x1 = 0; x1 < gridSize; x1++) {
       for (let y1 = 0; y1 < gridSize; y1++) {
@@ -169,8 +193,8 @@ onMounted(() => {
     for (let x = 0; x < gridSize; x++) {
       for (let y = 0; y < gridSize; y++) {
         if (grid.value[x][y].id === currentCell.id) {
-          let newX = Math.floor(grid.value[x][y].x);
-          let newY = Math.floor(grid.value[x][y].y);
+          let newX = Math.floor(grid.value[x][y].x + 0.5);
+          let newY = Math.floor(grid.value[x][y].y + 0.5);
 
           // Check if the new position is within bounds and not occupied by another ship
           if (
